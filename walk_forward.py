@@ -1,3 +1,9 @@
+"""
+This script creates an instance of trotting_robot with a servokit servo controller (adafruit)
+It loads the robot from directory "SP3.rbt"
+It then causes the robot to walk forwards at a constant speed forever
+"""
+
 import trotting_robot
 import time
 from spotpuppy.servo.servokit_servo_controller import controller
@@ -12,6 +18,6 @@ r.frequency=2
 r.step_height = 6
 
 r.state = r.STATE_TROTTING
-t = time.time()
+
 while True:
     r.update()

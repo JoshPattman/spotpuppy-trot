@@ -1,3 +1,6 @@
+"""
+This script creates an instance of trotting_robot (without a motor controller or rotation sensor attached), then benchmarks it.
+"""
 import trotting_robot
 import time
 
@@ -10,7 +13,7 @@ for i in range(1000):
     r.update()
 
 spt = (time.time()-t)/1000
-print("Without trotting: SPT:", spt, ", TPS:", 1/spt)
+print("Without trotting algoritm running -> Updates per second:", 1/spt)
 
 r.state = r.STATE_TROTTING
 t = time.time()
@@ -18,4 +21,4 @@ for i in range(1000):
     r.update()
 
 spt = (time.time()-t)/1000
-print("With trotting: SPT:", spt, ", TPS:", 1/spt)
+print("With trotting algoritm running -> Updates per second:", 1/spt)

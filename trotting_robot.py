@@ -1,3 +1,8 @@
+"""
+This module (not to be directly run) contains code for a simple quadrupedal robot that can trot, stand, and lay
+It is not bound to specific hardware
+"""
+
 from spotpuppy.models import quadruped_base
 import math, time
 
