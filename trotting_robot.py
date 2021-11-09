@@ -15,6 +15,8 @@ class quadruped (quadruped_base.quadruped):
 
         self.lay_height = lay_height
         self.step_height = 4
+        
+        self.use_dynamic_balancing = False
 
         self.last_update_time = time.time()
 
@@ -35,6 +37,14 @@ class quadruped (quadruped_base.quadruped):
             self.state_lay()
         else:
             self.state_trot()
+            
+    def _on_set_rotation(self):
+    	if use_dynamic_balancing:
+            self.quad_controller.body_rotation = self.current_rotation
+        else:
+            pass
+        
+    
 
     def state_lay(self):
         # Set all legs to height of self.lay_height
