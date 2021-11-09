@@ -60,13 +60,16 @@ class quadruped (quadruped_base.quadruped):
             self.quad_controller.set_leg(l, f_pos + v_off + f_off + l_off)
 
 
-def get_foot_height(t):
-    if t < 0.5:
-        return math.sin(t*3.14*2)
+# t is the timer, s is a value from 0-1 which denotes the length of time that the foot is in the air
+# at s = 1, as soon as one foot is place the other comes up, at s = 0.5, half the time both feet are on the ground
+def get_foot_height(t, s=1):
+    if t < 0.5*s:
+        return math.sin(t*3.14*2/s)
     return 0
 
 
-def get_foot_horiz(t):
-    if t < 0.5:
-        return 2*t
-    return (-2)*t + 2
+def get_foot_horiz(t, s=1):
+    if t < 0.5*s:
+        return 2*t/s
+    m = 2 / (s - 2)
+    return m*t - m
