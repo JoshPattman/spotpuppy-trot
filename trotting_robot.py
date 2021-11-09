@@ -16,6 +16,7 @@ class quadruped (quadruped_base.quadruped):
         self.state = self.STATE_LYING
         self.frequency = 1
         self.t = 0
+        self.air_multiplier = 1
         self.speed = [0, 0]
 
     def _on_update(self):
@@ -44,13 +45,13 @@ class quadruped (quadruped_base.quadruped):
     def state_trot(self):
         ta = self.t%1.0
         tb = (self.t+0.5)%1.0
-        v_clock = [get_foot_height(ta), get_foot_height(tb)]
-        h_clock = [get_foot_horiz(ta), get_foot_horiz(tb)]
+        v_clock = [get_foot_height(ta, s=self.air_multiplier), get_foot_height(tb, s=self.air_multiplier)]
+        h_clock = [get_foot_horiz(ta, s=self.air_multiplier), get_foot_horiz(tb, s=self.air_multiplier)]
         leg_sync = [0, 1, 1, 0]
         for l in range(4):
-            # Get the position of the foot on the floor under the shoulder when body is at height 6
+            # Get the position of the foot on the floor under the shoulder when body is at height 8
             f_pos = self.get_vector_to_robot_center(l, "body")\
-                    + (self.get_dir("global.down") * 6)\
+                    + (self.get_dir("global.down") * 8)\
                     - self.get_vector_to_robot_center(l, "global")
             # Calculate the vectors for step offset
             v_off = v_clock[leg_sync[l]] * self.step_height * self.get_dir("global.down") * -1
@@ -70,6 +71,9 @@ def get_foot_height(t, s=1):
 
 def get_foot_horiz(t, s=1):
     if t < 0.5*s:
-        return 2*t/s
+        return ztoTomto(2*t/s)
     m = 2 / (s - 2)
-    return m*t - m
+    return ztoTomto(m*t - m)
+
+def ztoTomto(x):
+    return (x-0.5)*2
