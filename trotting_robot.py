@@ -53,7 +53,7 @@ class quadruped (quadruped_base.quadruped):
     # The behaviour for the lying down state
     def state_lay(self):
         # Set all legs to height of self.lay_height
-        lay_pos = self.get_dir("body.down")*self.lay_height
+        lay_pos = self.get_dir("global.down")*self.lay_height
         for l in range(4):
             self.quad_controller.set_leg(l, lay_pos)
 
@@ -83,6 +83,13 @@ class quadruped (quadruped_base.quadruped):
         h_clock = [get_foot_horiz(ta, s=self.air_multiplier), get_foot_horiz(tb, s=self.air_multiplier)]
         # leg_sync says which legs use which clock (ta or tb)
         leg_sync = [0, 1, 1, 0]
+        roll_pitch = self.get_roll_pitch()
+        r_p_legs = [
+                (-roll_pitch[1]+roll_pitch[0])/90,
+                (-roll_pitch[1]-roll_pitch[0])/90,
+                (roll_pitch[1]+roll_pitch[0])/90,
+                (roll_pitch[1]-roll_pitch[0])/90
+                ]
         for l in range(4):
             # Get the position of the foot on the floor under the shoulder when body is at height 8
             f_pos = self.get_vector_to_robot_center(l, "body")\
@@ -92,9 +99,10 @@ class quadruped (quadruped_base.quadruped):
             v_off = v_clock[leg_sync[l]] * self.step_height * self.get_dir("global.down") * -1
             f_off = h_clock[leg_sync[l]] * self.speed[0] * self.get_dir("global.forward")
             l_off = h_clock[leg_sync[l]] * self.speed[1] * self.get_dir("global.left")
-            roll_pitch = self.get_roll_pitch()
             lean = (self.get_dir("body.forward")*self.lean[0]) + (self.get_dir("body.left")*self.lean[1])
-            self.quad_controller.set_leg(l, f_pos + v_off + f_off + l_off)
+            pushup_offset = self.get_dir("body.down") * r_p_legs[l] * 5
+            self.quad_controller.set_leg(l, f_pos + v_off + f_off + l_off + pushup_offset)
+            #self.quad_controller.set_leg(l, f_pos)
 
 
 # t is the timer, s is a value from 0-1 which denotes the length of time that the foot is in the air
