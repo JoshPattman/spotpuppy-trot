@@ -1,7 +1,7 @@
 # Module for using dulashock 4 controller with raspberry pi using evdev
 # By Josh Pattman
 
-from evdev import InputDevice, categorize, ecodes
+from evdev import InputDevice
 
 
 # Find all the button and joystick value events that the gamepad has
