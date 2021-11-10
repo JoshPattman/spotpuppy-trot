@@ -12,12 +12,14 @@ from spotpuppy.rotation.arduino_rotation_sensor import sensor
 
 r = trotting_robot.quadruped(servo_controller=controller(), rotation_sensor=sensor())
 json_serialiser.load_into_robot(r, "SP3.rbt")
+r.state=r.STATE_LYING
+r.update()
 r.rotation_sensor.calibrate()
 
 r.speed = [3, 0]
 r.air_multiplier = 0.5
 r.frequency=2
-r.step_height = 6
+r.step_height = 5
 #r.lay_height = 8
 
 r.state = r.STATE_TROTTING
