@@ -28,5 +28,5 @@ while True:
         r.state = r.STATE_STANDING
     if ds4.get_button_down(ds4.btn_o):
         r.state = r.STATE_PUSHUP
-    r.speed = [-3*ds4.get_axis(ds4.joy_throttle), -2*ds4.get_axis(ds4.joy_aileron)]
+    r.speed = [-3*ds4.get_joystick(ds4.joy_throttle), -2*ds4.get_joystick(ds4.joy_aileron)]
     r.update()
