@@ -18,6 +18,7 @@ class quadruped (quadruped_base.quadruped):
         self.STATE_LYING = 0
         self.STATE_STANDING = 1
         self.STATE_TROTTING = 2
+        self.STATE_PUSHUP = 3
 
         # Scripts can directly modify these to control the robot
         self.lay_height = lay_height
@@ -27,6 +28,7 @@ class quadruped (quadruped_base.quadruped):
         self.frequency = 1
         self.air_multiplier = 1
         self.speed = [0, 0]
+        self.lean = [0,0]
 
         # This stores the last time that the robot updated
         self.last_update_time = time.time()
@@ -42,6 +44,8 @@ class quadruped (quadruped_base.quadruped):
             self.state_stand()
         elif self.state == self.STATE_LYING:
             self.state_lay()
+        elif self.state == self.STATE_PUSHUP:
+            self.state_pu()
         else:
             self.state_trot()
     
@@ -52,6 +56,15 @@ class quadruped (quadruped_base.quadruped):
         lay_pos = self.get_dir("body.down")*self.lay_height
         for l in range(4):
             self.quad_controller.set_leg(l, lay_pos)
+
+    # The behaviour for the press up down state
+    def state_pu(self):
+        lay_pos = self.get_dir("body.down")*self.lay_height
+        push_pos = self.get_dir("body.down")*8
+        self.quad_controller.set_leg(0, lay_pos)
+        self.quad_controller.set_leg(1, lay_pos)
+        self.quad_controller.set_leg(2, push_pos)
+        self.quad_controller.set_leg(3, push_pos)
 
     # The behaviour for the stand state
     def state_stand(self):
@@ -80,6 +93,7 @@ class quadruped (quadruped_base.quadruped):
             f_off = h_clock[leg_sync[l]] * self.speed[0] * self.get_dir("global.forward")
             l_off = h_clock[leg_sync[l]] * self.speed[1] * self.get_dir("global.left")
             roll_pitch = self.get_roll_pitch()
+            lean = (self.get_dir("body.forward")*self.lean[0]) + (self.get_dir("body.left")*self.lean[1])
             self.quad_controller.set_leg(l, f_pos + v_off + f_off + l_off)
 
 
