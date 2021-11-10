@@ -1,58 +1,100 @@
+# Module for using dulashock 4 controller with raspberry pi using evdev
 # By Josh Pattman
 
-import ds4_control_base as pi_ds4_control_base
-
-# ************************************************DS4 on a pi constants************************************************
-# The Buttons X, Circle, Triangle, and Square
-DS4btnX = pi_ds4_control_base.btnX
-DS4btnO = pi_ds4_control_base.btnO
-DS4btnT = pi_ds4_control_base.btnT
-DS4btnS = pi_ds4_control_base.btnS
-
-# The Buttons L/R 1-3
-DS4L1 = pi_ds4_control_base.L1
-DS4L2 = pi_ds4_control_base.L2
-DS4L3 = pi_ds4_control_base.L3
-DS4R1 = pi_ds4_control_base.R1
-DS4R2 = pi_ds4_control_base.R2
-DS4R3 = pi_ds4_control_base.R3
-
-# The Joysticks
-DS4Throttle = pi_ds4_control_base.Throttle
-DS4Rudder = pi_ds4_control_base.Rudder
-DS4Elevator = pi_ds4_control_base.Elevator
-DS4Aileron = pi_ds4_control_base.Aileron
-
-BUTTON_CURRENTLY_PRESSED = 0
-BUTTON_JUST_PRESSED = 1
-BUTTON_NOT_PRESSED = 2
+from evdev import InputDevice, categorize, ecodes
 
 
-class pi_ds4_controller:
-    def __init__(self, device='DEFAULT'):
-        self.USABLE = pi_ds4_control_base.IS_EVDEV_INSTALLED
-        if self.USABLE:
-            if device == 'DEFAULT':
-                self.gamepad = pi_ds4_control_base.returnDefaultGamePad()
-            self.remote = pi_ds4_control_base.DS4Remote(
-                gamepad=self.gamepad, waitForConnection=True)
-        else:
-            print(
-                "Error. This controller is not useable as evdev is not installed. You must be on a pi")
+# Find all the button and joystick value events that the gamepad has
+def map_buttons(gamepad):
+    buttons = []
+    joyVals = {}
+    events = []
+    try:
+        for e in gamepad.read():
+            events.append(e)
+    except BlockingIOError:
+        pass
 
-    def refresh(self):
-        self.remote.refreshInputs()
+    for event in events:
+        # Button Pressed
+        if event.value == 1 and event.type == 1:
+            buttons.append(event.code)
+        # Joystick
+        elif event.type == 3:
+            joyVals[event.code] = event.value
+    return (buttons, joyVals)
 
-    def get_axis(self, axisNumber, normalise=False):
-        val = self.remote.joystickValues[axisNumber]
+
+def get_default_ds4(waitForConnection=True):
+    v = True
+    while v:
+        for i in range(10):
+            try:
+                tgp = InputDevice('/dev/input/event%s' % i)
+                if tgp.name in ["Sony Computer Entertainment Wireless Controller", "Wireless Controller"]:
+                    return tgp
+            except:
+                pass
+        v = (False if not waitForConnection else v)
+    return None
+
+
+buttons = 0
+joysticks = 1
+
+standard_joystick_values = {0: 125, 1: 125, 3: 125, 4: 125}
+
+
+class ds4_controller:
+    def __init__(self, gamepad=None, waitForConnection=False):
+        if gamepad is None:
+            gamepad = get_default_ds4(waitForConnection=waitForConnection)
+        if gamepad is None:
+            print("Gamepad could not be found")
+        self.gamepad = gamepad
+        self.pressed = []
+        self.old_pressed = []
+        self.joystick_values = dict(standard_joystick_values)
+
+        # The Buttons X, Circle, Triangle, and Square
+        self.btn_x = 304
+        self.btn_o = 305
+        self.btn_t = 307
+        self.btn_s = 308
+
+        # The Buttons L/R 1-3
+        self.btn_l1 = 310
+        self.btn_l2 = 312
+        self.btn_l3 = 317
+        self.btn_r1 = 311
+        self.btn_r2 = 313
+        self.btn_r3 = 318
+
+        # The Joysticks
+        self.joy_throttle = 1
+        self.joy_rudder = 0
+        self.joy_elevator = 4
+        self.joy_aileron = 3
+
+    def refresh_inputs(self):
+        inputs = map_buttons(self.gamepad)
+        self.old_pressed = self.pressed
+        self.pressed = inputs[buttons]
+        for k in inputs[joysticks]:
+            self.joystick_values[k] = inputs[1][k]
+
+    def get_joystick(self, axis_number, normalise=True):
+        val = self.joystick_values[axis_number]
         if not normalise:
             return val
         else:
             return (2 * val / 255) - 1
 
-    def get_button(self, buttonNumber):
-        is_pressed = buttonNumber in self.remote.pressed
-        if not is_pressed:
-            return BUTTON_NOT_PRESSED
-        was_pressed = buttonNumber in self.remote.old_pressed
-        return BUTTON_JUST_PRESSED if not was_pressed else BUTTON_CURRENTLY_PRESSED
+    def get_button(self, button_number):
+        return button_number in self.remote.pressed
+
+    def get_button_down(self, button_number):
+        return (button_number in self.pressed) and (button_number not in self.old_pressed)
+
+    def get_button_up(self, button_number):
+        return (button_number not in self.pressed) and (button_number in self.old_pressed)
