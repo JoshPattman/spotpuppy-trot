@@ -30,6 +30,7 @@ class quadruped (quadruped_base.quadruped):
         self.speed = [0, 0]
         self.lean = [0,0]
         self.push_factor=6
+        self.turn = 0
 
         # This stores the last time that the robot updated
         self.last_update_time = time.time()
@@ -84,6 +85,7 @@ class quadruped (quadruped_base.quadruped):
         h_clock = [get_foot_horiz(ta, s=self.air_multiplier), get_foot_horiz(tb, s=self.air_multiplier)]
         # leg_sync says which legs use which clock (ta or tb)
         leg_sync = [0, 1, 1, 0]
+        leg_turn_sync = [-1, -1, 1, 1]
         roll_pitch = self.get_roll_pitch()
         r_p_legs = [
                 (-roll_pitch[1]+roll_pitch[0])/90,
@@ -100,9 +102,10 @@ class quadruped (quadruped_base.quadruped):
             v_off = v_clock[leg_sync[l]] * self.step_height * self.get_dir("global.down") * -1
             f_off = h_clock[leg_sync[l]] * self.speed[0] * self.get_dir("global.forward")
             l_off = h_clock[leg_sync[l]] * self.speed[1] * self.get_dir("global.left")
+            r_off = h_clock[leg_sync[l]] * self.turn * self.get_dir("global.left") * leg_turn_sync[l]
             lean = (self.get_dir("body.forward")*self.lean[0]) + (self.get_dir("body.left")*self.lean[1])
             pushup_offset = self.get_dir("body.down") * r_p_legs[l] * self.push_factor
-            self.quad_controller.set_leg(l, f_pos + v_off + f_off + l_off + pushup_offset)
+            self.quad_controller.set_leg(l, f_pos + v_off + f_off + l_off + r_off + pushup_offset)
             #self.quad_controller.set_leg(l, f_pos)
 
 
