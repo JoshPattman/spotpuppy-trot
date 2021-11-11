@@ -34,7 +34,7 @@ class quadruped(quadruped_base.quadruped):
         self.lean = [0, 0]
 
         # These are the pid controllers for the leg push values
-        self._trot_push_pids = [pid_controller(0.1, 0, 0), pid_controller(0.1, 0, 0)]
+        self._trot_push_pids = [pid_controller(0.08, 0, 0), pid_controller(0.04, 0.02, 0)]
 
         # These are the pid controllers for pid pushup
 
@@ -73,17 +73,17 @@ class quadruped(quadruped_base.quadruped):
         for l in range(4):
             # Get the position of the foot on the floor under the shoulder when body is at height 8
             f_pos = self.get_vector_to_robot_center(l, "body") \
-                    + (self.get_dir("global.down") * 8) \
+                    + (self.get_dir("global.down") * 10) \
                     - self.get_vector_to_robot_center(l, "global")
             # Calculate the vectors for step offset
             # Vertical
             v_off = 0
             if push_legs[l] > 0:
                 v_off = map_range(v_clock[leg_sync[l]], 0, 1, -push_legs[l], self.trot_step_height)\
-                        * self.trot_step_height * -1 * self.get_dir("global.down")
+                        * -1 * self.get_dir("global.down")
             else:
                 v_off = map_range(v_clock[leg_sync[l]], 0, 1, -push_legs[l], self.trot_step_height-push_legs[l]) \
-                        * self.trot_step_height * -1 * self.get_dir("global.down")
+                        * -1 * self.get_dir("global.down")
             # Forwards
             f_off = h_clock[leg_sync[l]] * self.trot_step_length[0] * self.get_dir("global.forward")
             # Left

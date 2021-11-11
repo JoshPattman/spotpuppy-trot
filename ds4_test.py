@@ -7,17 +7,20 @@ from spotpuppy.utils import json_serialiser
 from spotpuppy.rotation.arduino_rotation_sensor import sensor
 
 ds4 = ds4_control.ds4_controller()
+print("Controller connected")
 
 r = model_controllable_trot.quadruped(servo_controller=servo_controller(), rotation_sensor=sensor())
 json_serialiser.load_into_robot(r, "SP3.rbt")
+print("Loaded robot")
 
 r.state=r.STATE_LYING
 r.update()
 r.rotation_sensor.calibrate()
+print("Calibrated sensor")
 
 r.trot_step_length = [3, 0]
 r.trot_air_multiplier = 0.5
-r.trot_frequency = 0.5
+r.trot_frequency = 1.5
 r.trot_step_height = 5
 r.lean = [0, 0.5]
 
