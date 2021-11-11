@@ -30,7 +30,7 @@ class quadruped (quadruped_base.quadruped):
         self.trot_turn = 0
 
         # These are the pid controllers for the leg push values
-        self._trot_push_pids = [pid_controller(1, 0, 0), pid_controller(1, 0, 0)]
+        self._trot_push_pids = [pid_controller(0.1, 0.05, 0), pid_controller(0.05, 0.015, 0)]
 
         # These are the pid controllers for pid pushup
 
@@ -43,7 +43,7 @@ class quadruped (quadruped_base.quadruped):
     # This method is a special method that gets called once every update step 
     def _on_update(self):
         current_t = time.time()
-        self.t += (current_t - self.last_update_time)*self.frequency
+        self.t += (current_t - self.last_update_time)*self.trot_frequency
         self.last_update_time = current_t
         self.state_trot()
 
@@ -53,19 +53,19 @@ class quadruped (quadruped_base.quadruped):
         ta = self.t%1.0
         tb = (self.t+0.5)%1.0
         # v_clock contains the foot heights (from 0-1) for ta and tb
-        v_clock = [get_foot_height(ta, s=self.air_multiplier), get_foot_height(tb, s=self.air_multiplier)]
+        v_clock = [get_foot_height(ta, s=self.trot_air_multiplier), get_foot_height(tb, s=self.trot_air_multiplier)]
         # h_clock contains foot horizontal offsets (from 0-1) for ta and tb
-        h_clock = [get_foot_horiz(ta, s=self.air_multiplier), get_foot_horiz(tb, s=self.air_multiplier)]
+        h_clock = [get_foot_horiz(ta, s=self.trot_air_multiplier), get_foot_horiz(tb, s=self.trot_air_multiplier)]
         # leg_sync says which legs use which clock (ta or tb)
         leg_sync = [0, 1, 1, 0]
         leg_turn_sync = [-1, -1, 1, 1]
         roll_pitch = self.get_roll_pitch()
         push_pids = [self._trot_push_pids[0].update(roll_pitch[1]), self._trot_push_pids[1].update(roll_pitch[0])]
         r_p_legs = [
-                (-push_pids[1]+push_pids[0])/90,
-                (-push_pids[1]-push_pids[0])/90,
-                (push_pids[1]+push_pids[0])/90,
-                (push_pids[1]-push_pids[0])/90
+                (push_pids[0]-push_pids[1]),
+                (push_pids[0]+push_pids[1]),
+                (-push_pids[0]-push_pids[1]),
+                (-push_pids[0]+push_pids[1])
                 ]
         for l in range(4):
             # Get the position of the foot on the floor under the shoulder when body is at height 8
@@ -73,12 +73,13 @@ class quadruped (quadruped_base.quadruped):
                     + (self.get_dir("global.down") * 8)\
                     - self.get_vector_to_robot_center(l, "global")
             # Calculate the vectors for step offset
-            v_off = v_clock[leg_sync[l]] * self.step_height * self.get_dir("global.down") * -1
-            f_off = h_clock[leg_sync[l]] * self.speed[0] * self.get_dir("global.forward")
-            l_off = h_clock[leg_sync[l]] * self.speed[1] * self.get_dir("global.left")
-            r_off = h_clock[leg_sync[l]] * self.turn * self.get_dir("global.left") * leg_turn_sync[l]
-            pushup_offset = self.get_dir("body.down") * r_p_legs[l] * self.push_factor
+            v_off = v_clock[leg_sync[l]] * self.trot_step_height * self.get_dir("global.down") * -1
+            f_off = h_clock[leg_sync[l]] * self.trot_step_length[0] * self.get_dir("global.forward")
+            l_off = h_clock[leg_sync[l]] * self.trot_step_length[1] * self.get_dir("global.left")
+            r_off = h_clock[leg_sync[l]] * self.trot_turn * self.get_dir("global.left") * leg_turn_sync[l]
+            pushup_offset = self.get_dir("global.down") * r_p_legs[l]
             self.quad_controller.set_leg(l, f_pos + v_off + f_off + l_off + r_off + pushup_offset)
+            #self.quad_controller.set_leg(l, self.get_dir("body.down")*8 +  pushup_offset)
 
 
 # t is the timer, s is a value from 0-1 which denotes the length of time that the foot is in the air
