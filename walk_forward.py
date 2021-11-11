@@ -17,7 +17,7 @@ r.rotation_sensor.calibrate()
 
 r.trot_step_length = [3, 0]
 r.trot_air_multiplier = 0.5
-r.trot_frequency=2
+r.trot_frequency = 2
 r.trot_step_height = 5
 
 
