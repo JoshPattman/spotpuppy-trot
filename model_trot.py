@@ -82,7 +82,7 @@ class quadruped(quadruped_base.quadruped):
                 v_off = map_range(v_clock[leg_sync[l]], 0, 1, -push_legs[l], self.trot_step_height)\
                         * self.trot_step_height * -1 * self.get_dir("global.down")
             else:
-                v_off = map_range(v_clock[leg_sync[l]], 0, 1, -push_legs[l], self.trot_step_height-push_legs) \
+                v_off = map_range(v_clock[leg_sync[l]], 0, 1, -push_legs[l], self.trot_step_height-push_legs[l]) \
                         * self.trot_step_height * -1 * self.get_dir("global.down")
             # Forwards
             f_off = h_clock[leg_sync[l]] * self.trot_step_length[0] * self.get_dir("global.forward")
