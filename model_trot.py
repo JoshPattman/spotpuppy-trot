@@ -28,9 +28,10 @@ class quadruped (quadruped_base.quadruped):
         self.trot_step_length = [0, 0]
         # The control value for the trot gait turning
         self.trot_turn = 0
+        self.lean = [0, 0]
 
         # These are the pid controllers for the leg push values
-        self._trot_push_pids = [pid_controller(0.1, 0.05, 0), pid_controller(0.05, 0.015, 0)]
+        self._trot_push_pids = [pid_controller(0.1, 0, 0), pid_controller(0.1, 0, 0)]
 
         # These are the pid controllers for pid pushup
 
@@ -78,7 +79,8 @@ class quadruped (quadruped_base.quadruped):
             l_off = h_clock[leg_sync[l]] * self.trot_step_length[1] * self.get_dir("global.left")
             r_off = h_clock[leg_sync[l]] * self.trot_turn * self.get_dir("global.left") * leg_turn_sync[l]
             pushup_offset = self.get_dir("global.down") * r_p_legs[l]
-            self.quad_controller.set_leg(l, f_pos + v_off + f_off + l_off + r_off + pushup_offset)
+            lean_offset = (self.get_dir("global.forward")*self.lean[0]) + (self.get_dir("global.left")*self.lean[1])
+            self.quad_controller.set_leg(l, f_pos + v_off + f_off + l_off + r_off + pushup_offset + lean_offset)
             #self.quad_controller.set_leg(l, self.get_dir("body.down")*8 +  pushup_offset)
 
 
