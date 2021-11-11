@@ -1,6 +1,6 @@
 import ds4_control
 
-import trotting_robot
+import model_controllable_trot
 import time
 from spotpuppy.servo.servokit_servo_controller import controller as servo_controller
 from spotpuppy.utils import json_serialiser
@@ -8,20 +8,18 @@ from spotpuppy.rotation.arduino_rotation_sensor import sensor
 
 ds4 = ds4_control.ds4_controller()
 
-r = trotting_robot.quadruped(servo_controller=servo_controller())
+r = model_controllable_trot.quadruped(servo_controller=servo_controller(), rotation_sensor=sensor())
 json_serialiser.load_into_robot(r, "SP3.rbt")
 
 r.state=r.STATE_LYING
 r.update()
 r.rotation_sensor.calibrate()
 
-r.speed = [2, 0]
-r.air_multiplier = 0.5
-r.frequency = 2
-r.step_height = 5
-r.lean = [0, -0.5]
+r.trot_step_length = [3, 0]
+r.trot_air_multiplier = 0.5
+r.trot_frequency = 2
+r.trot_step_height = 5
 
-r.state = r.STATE_LYING
 
 while True:
     ds4.refresh_inputs()
@@ -33,6 +31,6 @@ while True:
         r.state = r.STATE_STANDING
     if ds4.get_button_down(ds4.btn_o):
         r.state = r.STATE_PUSHUP
-    r.speed = [-3*ds4.get_joystick(ds4.joy_throttle), -2*ds4.get_joystick(ds4.joy_aileron)]
-    r.turn = 3*ds4.get_joystick(ds4.joy_rudder)
+    r.trot_step_length = [-3*ds4.get_joystick(ds4.joy_throttle), -2*ds4.get_joystick(ds4.joy_aileron)]
+    r.trot_turn = 3*ds4.get_joystick(ds4.joy_rudder)
     r.update()
