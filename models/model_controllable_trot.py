@@ -41,7 +41,7 @@ class quadruped(model_trot.quadruped):
     # The behaviour for the lying down state
     def state_lay(self):
         # Set all legs to height of self.lay_height
-        lay_pos = self.get_dir("global.down") * self.lay_height
+        lay_pos = self.get_dir("body.down") * self.lay_height
         for l in range(4):
             self.quad_controller.set_leg(l, lay_pos)
 

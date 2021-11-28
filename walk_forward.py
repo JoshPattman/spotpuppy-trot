@@ -4,7 +4,7 @@ It loads the robot from directory "SP3.rbt"
 It then causes the robot to walk forwards at a constant speed forever
 """
 
-import model_trot as trotting_robot
+from models import model_trot as trotting_robot
 import time
 from spotpuppy.servo.servokit_servo_controller import controller
 from spotpuppy.utils import json_serialiser

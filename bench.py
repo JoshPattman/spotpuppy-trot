@@ -1,7 +1,7 @@
 """
 This script creates an instance of trotting_robot (without a motor controller or rotation sensor attached), then benchmarks it.
 """
-import trotting_robot
+from models import model_trot as trotting_robot
 import time
 
 r = trotting_robot.quadruped()
