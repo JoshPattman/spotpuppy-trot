@@ -3,22 +3,23 @@ This script creates an instance of trotting_robot (without a motor controller or
 """
 from models import model_trot as trotting_robot
 import time
+from spotpuppy.utils.time_util import max_ups
+
+
 
 r = trotting_robot.quadruped()
-
-r.speed = [1, 0]
-
 t = time.time()
 for i in range(1000):
     r.update()
 
 spt = (time.time()-t)/1000
-print("Without trotting algoritm running -> Updates per second:", 1/spt)
+print("Uncapped -> Updates per second:", 1/spt)
 
-r.state = r.STATE_TROTTING
+m = max_ups(100)
 t = time.time()
-for i in range(1000):
+for i in range(200):
     r.update()
+    m.update()
 
-spt = (time.time()-t)/1000
-print("With trotting algoritm running -> Updates per second:", 1/spt)
+spt = (time.time()-t)/200
+print("Max UPS at 100 -> Updates per second:", 1/spt)
