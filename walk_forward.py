@@ -1,6 +1,6 @@
 """
 This script creates an instance of trotting_robot with a servokit servo controller (adafruit)
-It loads the robot from directory "SP3.rbt"
+It loads the robot from directory "robot_config.rbt"
 It then causes the robot to walk forwards at a constant speed forever
 """
 
@@ -12,7 +12,7 @@ from spotpuppy.rotation.arduino_rotation_sensor import sensor
 from spotpuppy.utils.robot_update_thread import start_threaded_updates
 
 r = trotting_robot.quadruped(servo_controller=controller(), rotation_sensor=sensor())
-json_serialiser.load_into_robot(r, "SP3.rbt")
+json_serialiser.load_into_robot(r, "robot_config.rbt")
 
 r.rotation_sensor.calibrate()
 

@@ -1,6 +1,6 @@
 """
 This script creates an instance of trotting_robot with a servokit servo controller (adafruit)
-It loads the robot from directory "SP3.rbt"
+It loads the robot from directory "robot_config.rbt"
 It then causes the robot to follow the ds4 controller commands
 """
 
@@ -17,7 +17,7 @@ ds4 = ds4_control.ds4_controller()
 print("Controller connected")
 
 r = model_controllable_trot.quadruped(servo_controller=servo_controller(), rotation_sensor=sensor())
-json_serialiser.load_into_robot(r, "SP3.rbt")
+json_serialiser.load_into_robot(r, "robot_config.rbt")
 print("Loaded robot")
 
 r.state=r.STATE_LYING
