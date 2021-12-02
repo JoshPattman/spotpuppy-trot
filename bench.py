@@ -5,8 +5,6 @@ from models import model_trot as trotting_robot
 import time
 from spotpuppy.utils.time_util import max_ups
 
-
-
 r = trotting_robot.quadruped()
 t = time.time()
 for i in range(1000):
