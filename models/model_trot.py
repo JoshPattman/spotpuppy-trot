@@ -10,12 +10,9 @@ import math, time
 
 # Must extend the base class
 class quadruped(quadruped_base.quadruped):
-    def __init__(self, rotation_sensor=None, servo_controller=None, bone_length=6, body_dims=[10, 10],
-                 fall_rotation_limit=0, lay_height=3):
+    def __init__(self, **kwargs):
         # Initialise the base class
-        quadruped_base.quadruped.__init__(self, rotation_sensor=rotation_sensor, servo_controller=servo_controller,
-                                          bone_length=bone_length, body_dims=body_dims,
-                                          fall_rotation_limit=fall_rotation_limit)
+        super().__init__(**kwargs)
 
         # All variables below are custom variables that are specific to this custom quadruped. They are used to control the robot
 
