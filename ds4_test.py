@@ -30,9 +30,10 @@ r.trot_air_multiplier = 0.5
 r.trot_frequency = 1.5
 r.trot_step_height = 5
 r.lean = [0, 0.5]
+r.trot_tile_move_mult = 0.3
 
 # Start the robot updating at 50 times per second
-start_threaded_updates(r, 50, warn_if_low=False)
+start_threaded_updates(r, 40, warn_if_low=True)
 
 # At 20 times per second, update the controller and tell the robot to move
 while True:

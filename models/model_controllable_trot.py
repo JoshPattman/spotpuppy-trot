@@ -1,4 +1,4 @@
-import model_trot
+from . import model_trot
 import time
 
 # Must extend the base class
@@ -57,5 +57,5 @@ class quadruped(model_trot.quadruped):
     # The behaviour for the stand state
     def state_stand(self):
         # Set all legs to default height
-        posses = self._calculate_still_positions()
+        posses = self.calculate_still_positions()
         self.quad_controller.set_all_legs(posses)

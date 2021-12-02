@@ -22,7 +22,7 @@ r.trot_frequency = 2
 r.trot_step_height = 5
 
 
-start_threaded_updates(r, 50, warn_if_low=True)
+start_threaded_updates(r, 40, warn_if_low=True)
 while True:
     # This would be where control logic goes, does not have to run at a fixed timestep
     time.sleep(1)
