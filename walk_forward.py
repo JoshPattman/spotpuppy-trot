@@ -11,13 +11,17 @@ from spotpuppy.utils import json_serialiser
 from spotpuppy.rotation.arduino_rotation_sensor import sensor
 from spotpuppy.utils.robot_update_thread import start_threaded_updates
 
-r = trotting_robot.quadruped(servo_controller=controller(), rotation_sensor=sensor())
+s = sensor()
+s.inverse_x = True
+s.inverse_z = True
+
+r = trotting_robot.quadruped(servo_controller=controller(), rotation_sensor=s)
 json_serialiser.load_into_robot(r, "robot_config.rbt")
 
 r.rotation_sensor.calibrate()
 
 r.trot_step_length = [3, 0]
-r.trot_air_multiplier = 0.5
+r.trot_air_multiplier = 0.8
 r.trot_frequency = 2
 r.trot_step_height = 5
 
