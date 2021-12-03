@@ -72,7 +72,7 @@ class quadruped(quadruped_base.quadruped):
         for l in range(4):
             # Get the position of the foot on the floor under the shoulder when body is at height 8
             f_pos = self.get_vector_to_robot_center(l, "body") \
-                    + (self.get_dir("global.down") * 11) \
+                    + (self.get_dir("global.down") * 9) \
                     - self.get_vector_to_robot_center(l, "global")
             # Calculate the vectors for step offset
             # Vertical
