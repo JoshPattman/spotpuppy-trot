@@ -15,6 +15,7 @@ class quadruped(quadruped_base.quadruped):
         self.trot_frequency = 3
         self.air_mult = 1
         self.pushup_pids = [pid_controller(0.1, 0, 0), pid_controller(0.1, 0, 0)]
+        self.trot_speed = np.array([0, 0])
 
     # This method is a special method that gets called once every update step
     def _on_update(self):
@@ -23,20 +24,35 @@ class quadruped(quadruped_base.quadruped):
         self.last_update_time = current_t
         self.state_trot()
 
+    def set_trot_speed(self, forwards, left):
+        self.trot_speed[0] = forwards
+        self.trot_speed[1] = left
+
     def state_trot(self):
+        # State
         roll_pitch = self.get_roll_pitch()
+
+        # PID pushup
         pushup = [0,0]
         pushup[0] = self.pushup_pids[0].update(roll_pitch[0])
         pushup[1] = self.pushup_pids[1].update(roll_pitch[1])
         pushup_legs = [-pushup[0] + pushup[1], pushup[0] + pushup[1], -pushup[0] - pushup[1], pushup[0] - pushup[1]]
+
         for leg in range(4):
+            # Footprint
             footprint = self.get_vector_to_robot_center(leg, "body") \
                         + (self.get_dir("global.down") * 11) \
                         - self.get_vector_to_robot_center(leg, "global")
 
+            # Gait
+            trot_length = (self.trot_speed / self.trot_frequency) / self.air_mult
             gait_pos_raw_horiz, gait_pos_raw_vert = get_gait_pos(self.t, s=self.air_mult)
+            gait_forwards = gait_pos_raw_horiz * trot_length[0] * self.get_dir("global.forwards")
+            gait_left = gait_pos_raw_horiz * trot_length[1] * self.get_dir("global.left")
             gait_vertical = gait_pos_raw_vert * self.get_dir("global.down") * 5
             pushup_leg = pushup_legs[leg] * self.get_dir("global.down")
+
+            # Merging
             self.quad_controller.set_leg(leg, footprint + pushup_leg)
 
 
