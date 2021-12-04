@@ -14,7 +14,7 @@ json_serialiser.load_into_robot(r, "robot_config.rbt")
 
 r.rotation_sensor.calibrate()
 
-r.trot_freqency = 2
+r.trot_frequency = 2
 r.air_mult = 0.5
 
 
