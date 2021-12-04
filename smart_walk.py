@@ -1,7 +1,6 @@
 from models import model_smart_trot
 import time
 from spotpuppy.servo.servokit_servo_controller import controller
-from spotpuppy.utils import json_serialiser
 from spotpuppy.rotation.arduino_rotation_sensor import sensor
 from spotpuppy.utils.robot_update_thread import start_threaded_updates
 
@@ -10,7 +9,7 @@ s.inverse_x = True
 s.inverse_z = True
 
 r = model_smart_trot.quadruped(servo_controller=controller(), rotation_sensor=s)
-json_serialiser.load_into_robot(r, "robot_config.rbt")
+r.load_config_folder("robot_config.rbt")
 
 r.rotation_sensor.calibrate()
 

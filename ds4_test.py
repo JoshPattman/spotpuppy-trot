@@ -9,7 +9,6 @@ from models import model_controllable_trot
 import time
 
 from spotpuppy.servo.servokit_servo_controller import controller as servo_controller
-from spotpuppy.utils import json_serialiser
 from spotpuppy.rotation.arduino_rotation_sensor import sensor
 from spotpuppy.utils.robot_update_thread import start_threaded_updates
 
@@ -17,7 +16,7 @@ ds4 = ds4_control.ds4_controller()
 print("Controller connected")
 
 r = model_controllable_trot.quadruped(servo_controller=servo_controller(), rotation_sensor=sensor())
-json_serialiser.load_into_robot(r, "robot_config.rbt")
+r.load_config_folder("robot_config.rbt")
 print("Loaded robot")
 
 r.state=r.STATE_LYING

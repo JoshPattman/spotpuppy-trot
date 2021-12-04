@@ -6,6 +6,7 @@ import time
 from spotpuppy.utils.time_util import max_ups
 
 r = trotting_robot.quadruped()
+r.load_config_folder("robot_config.rbt")
 t = time.time()
 for i in range(1000):
     r.update()
