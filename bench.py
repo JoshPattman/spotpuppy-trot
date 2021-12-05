@@ -1,7 +1,7 @@
 """
 This script creates an instance of trotting_robot (without a motor controller or rotation sensor attached), then benchmarks it.
 """
-from models import model_trot as trotting_robot
+from models import model_smart_trot as trotting_robot
 import time
 from spotpuppy.utils.time_util import max_ups
 
