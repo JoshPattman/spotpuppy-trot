@@ -1,0 +1,66 @@
+{
+    "FL": {
+        "Inverse_Axis": {
+            "X": false,
+            "Y": false,
+            "Z": false
+        },
+        "Offsets": {
+            "Hip_Z": -5,
+            "Hip_X": -10,
+            "Knee": -7
+        },
+        "Reverse_Servo": {
+            "Hip_X": true,
+            "Knee": true
+        }
+    },
+    "FR": {
+        "Inverse_Axis": {
+            "X": false,
+            "Y": false,
+            "Z": false
+        },
+        "Offsets": {
+            "Hip_Z": 0,
+            "Hip_X": 5,
+            "Knee": 10
+        },
+        "Reverse_Servo": {
+            "Hip_X": false,
+            "Knee": false
+        }
+    },
+    "BL": {
+        "Inverse_Axis": {
+            "X": true,
+            "Y": false,
+            "Z": false
+        },
+        "Offsets": {
+            "Hip_Z": 6,
+            "Hip_X": 20,
+            "Knee": 0
+        },
+        "Reverse_Servo": {
+            "Hip_X": false,
+            "Knee": false
+        }
+    },
+    "BR": {
+        "Inverse_Axis": {
+            "X": true,
+            "Y": false,
+            "Z": false
+        },
+        "Offsets": {
+            "Hip_Z": 13,
+            "Hip_X": -8,
+            "Knee": -15
+        },
+        "Reverse_Servo": {
+            "Hip_X": true,
+            "Knee": true
+        }
+    }
+}

@@ -13,8 +13,8 @@ r.load_config_folder("robot_config.rbt")
 
 r.rotation_sensor.calibrate()
 
-r.trot_frequency = 2
-r.air_mult = 0.5
+r.trot_frequency = 1.5
+r.air_mult = 0.7
 
 
 start_threaded_updates(r, 40, warn_if_low=True)

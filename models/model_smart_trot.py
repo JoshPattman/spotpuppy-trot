@@ -15,8 +15,8 @@ class quadruped(quadruped_base.quadruped):
         self.t = 0
         self.trot_frequency = 3
         self.air_mult = 1
-        self.pushup_pids = [pid_controller(0.1, 0, 0), pid_controller(0.1, 0, 0)]
-        self.trot_speed = np.array([0, 0])
+        self.pushup_pids = [pid_controller(0.2, 0, 0), pid_controller(0.2, 0, 0)]
+        self.trot_speed = np.array([0.0, 0.0])
         self.tilt_walk_mult = 1
         self.step_height = 5
 
@@ -40,36 +40,37 @@ class quadruped(quadruped_base.quadruped):
 
         # State
         roll_pitch = self.get_roll_pitch()
-
         # PID pushup
-        pushup = [0,0]
-        pushup[0] = self.pushup_pids[0].update(roll_pitch[0])
-        pushup[1] = self.pushup_pids[1].update(roll_pitch[1])
-        pushup_legs = [-pushup[0] + pushup[1], pushup[0] + pushup[1], -pushup[0] - pushup[1], pushup[0] - pushup[1]]
-
+        pushup = {}
+        # positive roll -> tilt left, positive pitch -> tilt back
+        pushup["roll"] = -self.pushup_pids[0].update(roll_pitch[0])
+        pushup["pitch"] = self.pushup_pids[1].update(roll_pitch[1])
+        pushup_legs = [pushup["roll"] + pushup["pitch"], -pushup["roll"] + pushup["pitch"], pushup["roll"] - pushup["pitch"], -pushup["roll"] - pushup["pitch"]]
         for leg in range(4):
             # Footprint
             footprint = self.get_vector_to_robot_center(leg, "body") \
-                        + (self.get_dir("global.down") * 11) \
+                        + (self.get_dir("global.down") * 9) \
                         - self.get_vector_to_robot_center(leg, "global")
 
             # Tilt walk
-            t_mult = (1 / 45) * self.tilt_walk_mult
-            self.trot_speed[0], self.trot_speed[1] = roll_pitch[1] * t_mult, roll_pitch[0] * t_mult
+            t_mult = (1.0 / 45.0) * self.tilt_walk_mult
+            self.trot_speed[0], self.trot_speed[1] =roll_pitch[1] * -t_mult, roll_pitch[0] * t_mult
 
             # Gait
             trot_length = (self.trot_speed / self.trot_frequency) / self.air_mult
             clk = clk_a if leg in [0, 3] else clk_b
-            gait_pos_raw_horiz, gait_pos_raw_vert = get_gait_pos(clk, s=self.air_mult)
+            gait_pos_raw_horiz, gait_pos_raw_vert = get_gait_pos(clk, s=self.air_mult, pushup=pushup_legs[leg], step_height=self.step_height)
             gait_forwards = gait_pos_raw_horiz * trot_length[0] * self.get_dir("global.forward")
             gait_left = gait_pos_raw_horiz * trot_length[1] * self.get_dir("global.left")
 
             # If we are pushing up, only push up at the bottom of the step
             # If the pushup for this side is negative (leg should be closer to body)
-            step_min = -pushup_legs[leg]
-            step_max = self.step_height if pushup_legs[leg] > 0 else self.step_height - pushup_legs[leg]
-            gait_vertical_transformed = map_range(gait_pos_raw_vert, 0, 1, step_min, step_max)
-            gait_vertical = gait_vertical_transformed * self.get_dir("global.down") * -1
+            #step_min = 0# -pushup_legs[leg]
+            #step_height = max([self.step_height, self.step_height-pushup_legs[leg]])
+            #step_max = self.step_height if pushup_legs[leg] > 0 else self.step_height - (pushup_legs[leg]*3)
+            #step_max = self.step_height # step_min+step_height
+            #gait_vertical_transformed = map_range(gait_pos_raw_vert, 0, 1, step_min, step_max)
+            gait_vertical = gait_pos_raw_vert * self.get_dir("global.down") * -1
             gait = gait_forwards + gait_left + gait_vertical
 
             # Merging
@@ -79,14 +80,15 @@ class quadruped(quadruped_base.quadruped):
 # GAIT
 # t is the timer, s is a value from 0-1 which denotes the length of time that the foot is in the air
 # at s = 1, as soon as one foot is place the other comes up, at s = 0.5, half the time both feet are on the ground
-def get_gait_pos(t, s=1):
-    return get_foot_horiz(t, s=s), get_foot_height(t, s=s)
+def get_gait_pos(t, s=1, pushup=0, step_height=1):
+    return get_foot_horiz(t, s=s), get_foot_height(t, s=s, pushup=pushup, step_height=step_height)
 
 
-def get_foot_height(t, s=1):
+def get_foot_height(t, s=1, pushup=0, step_height=1):
     if t < 0.5 * s:
-        return math.sin(t * 3.14 * 2 / s)
-    return 0
+        return math.sin(t * 3.14 * 2 / s)*step_height
+    p = pushup if pushup > 0 else 0
+    return math.sin((t-1)*3.14/(1-(s/2)))*p
 
 
 def get_foot_horiz(t, s=1):

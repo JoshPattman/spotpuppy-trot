@@ -1,0 +1,9 @@
+{
+    "body_dims": {
+        "X": 18,
+        "Z": 11
+    },
+    "bone_length": 6,
+    "fall_rotation_limit": 45,
+    "class_parameters": {}
+}

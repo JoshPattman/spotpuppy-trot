@@ -1,0 +1,25 @@
+{
+    "aux": {},
+    "legs": {
+        "FL": {
+            "hip_Z": 11,
+            "hip_X": 13,
+            "knee": 15
+        },
+        "FR": {
+            "hip_Z": 10,
+            "hip_X": 12,
+            "knee": 14
+        },
+        "BL": {
+            "hip_Z": 4,
+            "hip_X": 2,
+            "knee": 0
+        },
+        "BR": {
+            "hip_Z": 5,
+            "hip_X": 3,
+            "knee": 1
+        }
+    }
+}
