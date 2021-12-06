@@ -34,6 +34,10 @@ class quadruped(quadruped_base.quadruped):
         self.pushup_pids[1].set_target(left*self.fall_rotation_limit)
 
     def state_trot(self):
+        # Clocks
+        clk_a = self.t % 1.0
+        clk_b = (self.t + 0.5) % 1.0
+
         # State
         roll_pitch = self.get_roll_pitch()
 
@@ -55,7 +59,8 @@ class quadruped(quadruped_base.quadruped):
 
             # Gait
             trot_length = (self.trot_speed / self.trot_frequency) / self.air_mult
-            gait_pos_raw_horiz, gait_pos_raw_vert = get_gait_pos(self.t, s=self.air_mult)
+            clk = clk_a if leg in [0, 3] else clk_b
+            gait_pos_raw_horiz, gait_pos_raw_vert = get_gait_pos(clk, s=self.air_mult)
             gait_forwards = gait_pos_raw_horiz * trot_length[0] * self.get_dir("global.forward")
             gait_left = gait_pos_raw_horiz * trot_length[1] * self.get_dir("global.left")
 
