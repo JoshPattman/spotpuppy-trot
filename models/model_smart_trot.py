@@ -16,8 +16,9 @@ class quadruped(quadruped_base.quadruped):
         self.trot_frequency = 3
         self.air_mult = 1
         self.pushup_pids = [pid_controller(0.2, 0, 0), pid_controller(0.2, 0, 0)]
+        self.pushup_pids[1].set_target(10)
         self.trot_speed = np.array([0.0, 0.0])
-        self.tilt_walk_mult = 1
+        self.tilt_walk_mult = 2.5
         self.step_height = 5
 
     # This method is a special method that gets called once every update step
