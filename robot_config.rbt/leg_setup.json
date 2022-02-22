@@ -6,9 +6,9 @@
             "Z": false
         },
         "Offsets": {
-            "Hip_Z": -5,
-            "Hip_X": -10,
-            "Knee": -7
+            "Hip_Z": 0,
+            "Hip_X": 0,
+            "Knee": 0
         },
         "Reverse_Servo": {
             "Hip_X": true,
@@ -23,8 +23,8 @@
         },
         "Offsets": {
             "Hip_Z": 0,
-            "Hip_X": 5,
-            "Knee": 10
+            "Hip_X": 0,
+            "Knee": 0
         },
         "Reverse_Servo": {
             "Hip_X": false,
@@ -38,8 +38,8 @@
             "Z": false
         },
         "Offsets": {
-            "Hip_Z": 6,
-            "Hip_X": 20,
+            "Hip_Z": 0,
+            "Hip_X": 0,
             "Knee": 0
         },
         "Reverse_Servo": {
@@ -54,9 +54,9 @@
             "Z": false
         },
         "Offsets": {
-            "Hip_Z": 13,
-            "Hip_X": -8,
-            "Knee": -15
+            "Hip_Z": 0,
+            "Hip_X": 0,
+            "Knee": 0
         },
         "Reverse_Servo": {
             "Hip_X": true,
