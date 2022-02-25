@@ -1,5 +1,5 @@
 {
-  "inverse_x": true,
-  "inverse_z": true,
+  "inverse_x": false,
+  "inverse_z": false,
   "flip_x_z": true
 }

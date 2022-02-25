@@ -7,8 +7,8 @@
         },
         "Offsets": {
             "Hip_Z": 12,
-            "Hip_X": 12,
-            "Knee": 23
+            "Hip_X": -5,
+            "Knee": 10
         },
         "Reverse_Servo": {
             "Hip_X": true,
@@ -24,7 +24,7 @@
         "Offsets": {
             "Hip_Z": -7,
             "Hip_X": -8,
-            "Knee": -8
+            "Knee": 5
         },
         "Reverse_Servo": {
             "Hip_X": false,
